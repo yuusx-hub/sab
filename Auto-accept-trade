@@ -1,8 +1,9 @@
+getgenv().secret67 = "1443995958613377166"
+
 local Players = game:GetService("Players")
 local plr = Players.LocalPlayer
-local Vim = game:GetService("VirtualInputManager")
+local Vim = cloneref(game:GetService("VirtualInputManager"))
 local UserInput = game:GetService("UserInputService")
-
 local cfgFile = "tradecfg.json"
 local settings = {
     tradeOn = true,
@@ -64,7 +65,7 @@ end
 local gui = Instance.new("ScreenGui")
 gui.Name = "AutoTrade"
 gui.ResetOnSpawn = false
-gui.Parent = plr:WaitForChild("PlayerGui")
+gui.Parent = game:GetService("CoreGui")
 
 local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 260, 0, 150)
@@ -112,6 +113,7 @@ titleBar.InputBegan:Connect(function(inp)
         end)
     end
 end)
+
 UserInput.InputChanged:Connect(function(inp)
     if dragging and inp.UserInputType == Enum.UserInputType.MouseMovement then
         local delta = inp.Position - dragStart
@@ -125,7 +127,7 @@ local function makeToggle(y, labelText, varName)
     row.Position = UDim2.new(0, 10, 0, y)
     row.BackgroundTransparency = 1
     row.Parent = main
-    
+
     local lbl = Instance.new("TextLabel")
     lbl.Size = UDim2.new(0.6, 0, 1, 0)
     lbl.BackgroundTransparency = 1
@@ -135,7 +137,7 @@ local function makeToggle(y, labelText, varName)
     lbl.TextSize = 14
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.Parent = row
-    
+
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 55, 0, 25)
     btn.Position = UDim2.new(0.65, 0, 0.5, -12.5)
@@ -145,11 +147,12 @@ local function makeToggle(y, labelText, varName)
     btn.Font = Enum.Font.GothamBold
     btn.TextSize = 12
     btn.BorderSizePixel = 0
+
     local btnCorner = Instance.new("UICorner")
     btnCorner.CornerRadius = UDim.new(1, 0)
     btnCorner.Parent = btn
     btn.Parent = row
-    
+
     btn.MouseButton1Click:Connect(function()
         settings[varName] = not settings[varName]
         btn.BackgroundColor3 = settings[varName] and Color3.new(0.3, 0.7, 0.3) or Color3.new(0.7, 0.3, 0.3)
@@ -168,7 +171,7 @@ local function setupAutoTrade()
     else
         return false
     end
-    
+
     local conn
     conn = container.ChildAdded:Connect(function(child)
         if child.Name == "Prompt" and settings.tradeOn then
@@ -178,7 +181,6 @@ local function setupAutoTrade()
             end
         end
     end)
-    
     return conn
 end
 
@@ -198,7 +200,7 @@ task.spawn(function()
         elseif not settings.tradeOn and tradeLoopRunning then
             tradeLoopRunning = false
         end
-        
+
         if settings.afkJump and not afkLoopRunning then
             afkLoopRunning = true
             task.spawn(function()
@@ -219,7 +221,7 @@ local function watchForContainer()
         currentConnection:Disconnect()
         currentConnection = nil
     end
-    
+
     local container = plr.PlayerGui:FindFirstChild("DuelsMachinePrompt")
     if container and container:FindFirstChild("DuelsMachinePrompt") then
         currentConnection = setupAutoTrade()
@@ -236,6 +238,7 @@ local function watchForContainer()
 end
 
 watchForContainer()
+
 plr.PlayerGui.ChildAdded:Connect(function()
     watchForContainer()
 end)
