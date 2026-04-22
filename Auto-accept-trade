@@ -1,5 +1,3 @@
-getgenv().secret67 = "1443995958613377166"
-
 local Players = game:GetService("Players")
 local plr = Players.LocalPlayer
 local Vim = cloneref(game:GetService("VirtualInputManager"))
