@@ -1,0 +1,339 @@
+    
+--// SUMMER FUSE GUI (FINAL FIXED)
+--// StarterPlayer > StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UIS = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+--// REMOVE OLD GUI
+if playerGui:FindFirstChild("SummerFuse") then
+	playerGui.SummerFuse:Destroy()
+end
+
+--////////////////////////////////////////////////////
+--// GUI
+--////////////////////////////////////////////////////
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "SummerFuse"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.Parent = playerGui
+
+--////////////////////////////////////////////////////
+--// MAIN FRAME
+--////////////////////////////////////////////////////
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 520, 0, 300)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = Color3.fromRGB(18, 25, 45)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 16)
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(0, 170, 255)
+stroke.Thickness = 2
+stroke.Parent = frame
+
+--////////////////////////////////////////////////////
+--// 📱 MOBILE SCALE FIX
+--////////////////////////////////////////////////////
+
+local uiScale = Instance.new("UIScale")
+uiScale.Parent = frame
+
+local function updateScale()
+	local v = workspace.CurrentCamera.ViewportSize
+
+	if v.X < 700 then
+		uiScale.Scale = 0.75
+	elseif v.X < 1000 then
+		uiScale.Scale = 0.9
+	else
+		uiScale.Scale = 1
+	end
+end
+
+updateScale()
+workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
+
+--////////////////////////////////////////////////////
+--// TOP BAR
+--////////////////////////////////////////////////////
+
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1, 0, 0, 42)
+topBar.BackgroundColor3 = Color3.fromRGB(10, 15, 30)
+topBar.BorderSizePixel = 0
+topBar.Parent = frame
+
+Instance.new("UICorner", topBar).CornerRadius = UDim.new(0, 16)
+
+local title = Instance.new("TextLabel")
+title.BackgroundTransparency = 1
+title.Size = UDim2.new(1, -120, 1, 0)
+title.Position = UDim2.new(0, 15, 0, 0)
+title.Font = Enum.Font.GothamBold
+title.Text = "🌴 SUMMER FUSE"
+title.TextColor3 = Color3.fromRGB(255,255,255)
+title.TextSize = 22
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = topBar
+
+--////////////////////////////////////////////////////
+--// BUTTONS
+--////////////////////////////////////////////////////
+
+local holder = Instance.new("Frame")
+holder.BackgroundTransparency = 1
+holder.Size = UDim2.new(0, 80, 1, 0)
+holder.Position = UDim2.new(1, -85, 0, 0)
+holder.Parent = topBar
+
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0, 30, 0, 30)
+minBtn.Position = UDim2.new(0, 0, 0.5, -15)
+minBtn.BackgroundColor3 = Color3.fromRGB(255,170,0)
+minBtn.Text = "—"
+minBtn.Font = Enum.Font.GothamBold
+minBtn.TextColor3 = Color3.new(1,1,1)
+minBtn.TextSize = 20
+minBtn.BorderSizePixel = 0
+minBtn.Parent = holder
+Instance.new("UICorner", minBtn).CornerRadius = UDim.new(1,0)
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(0, 40, 0.5, -15)
+closeBtn.BackgroundColor3 = Color3.fromRGB(255,70,70)
+closeBtn.Text = "✕"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.TextSize = 18
+closeBtn.BorderSizePixel = 0
+closeBtn.Parent = holder
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1,0)
+
+--////////////////////////////////////////////////////
+--// CONTENT
+--////////////////////////////////////////////////////
+
+local content = Instance.new("Frame")
+content.BackgroundTransparency = 1
+content.Size = UDim2.new(1,0,1,-42)
+content.Position = UDim2.new(0,0,0,42)
+content.Parent = frame
+
+local brainrotLabel = Instance.new("TextLabel")
+brainrotLabel.BackgroundTransparency = 1
+brainrotLabel.Size = UDim2.new(1, -40, 0, 120)
+brainrotLabel.Position = UDim2.new(0,20,0,40)
+brainrotLabel.Font = Enum.Font.GothamBlack
+brainrotLabel.TextScaled = true
+brainrotLabel.TextColor3 = Color3.fromRGB(255,255,255)
+brainrotLabel.Text = "Loading..."
+brainrotLabel.Parent = content
+
+local rerollBtn = Instance.new("TextButton")
+rerollBtn.Size = UDim2.new(0, 220, 0, 55)
+rerollBtn.Position = UDim2.new(0.5, -110, 1, -85)
+rerollBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+rerollBtn.Text = "🎲 REROLL"
+rerollBtn.Font = Enum.Font.GothamBold
+rerollBtn.TextColor3 = Color3.new(1,1,1)
+rerollBtn.TextSize = 24
+rerollBtn.BorderSizePixel = 0
+rerollBtn.Parent = content
+Instance.new("UICorner", rerollBtn).CornerRadius = UDim.new(0,14)
+
+--////////////////////////////////////////////////////
+--// NOTIFICATION
+--////////////////////////////////////////////////////
+
+local notification = Instance.new("TextLabel")
+notification.Size = UDim2.new(0, 0, 0, 50)
+notification.Position = UDim2.new(0.5, 0, 0, -60)
+notification.AnchorPoint = Vector2.new(0.5, 0)
+notification.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
+notification.TextColor3 = Color3.fromRGB(0,0,0)
+notification.TextScaled = true
+notification.Font = Enum.Font.GothamBold
+notification.Text = "🏆 SUCCESSFULLY GOT DRAGON AQUANINI!"
+notification.Visible = false
+notification.BorderSizePixel = 0
+notification.Parent = gui
+Instance.new("UICorner", notification).CornerRadius = UDim.new(0,12)
+
+--////////////////////////////////////////////////////
+--// BRAINROTS (NO BOMBARDO)
+--////////////////////////////////////////////////////
+
+local brainrots = {
+	{name="Ombrello Topolino", color=Color3.fromRGB(120,255,150)},
+	{name="Capitano Gullini", color=Color3.fromRGB(255,100,100)},
+	{name="Coco and Mango", color=Color3.fromRGB(255,220,50)},
+	{name="Dragon Aquanini", rainbow=true}
+}
+
+--////////////////////////////////////////////////////
+--// RAINBOW
+--////////////////////////////////////////////////////
+
+local rainbowLoop = false
+
+local function rainbowEffect()
+	if rainbowLoop then return end
+	rainbowLoop = true
+
+	task.spawn(function()
+		while rainbowLoop do
+			for i = 0,1,0.02 do
+				if not rainbowLoop then break end
+				brainrotLabel.TextColor3 = Color3.fromHSV(i,1,1)
+				task.wait(0.03)
+			end
+		end
+	end)
+end
+
+--////////////////////////////////////////////////////
+--// DRAGGING (FIXED)
+--////////////////////////////////////////////////////
+
+local dragging = false
+local dragStart
+local startPos
+
+topBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 and not gotLegendary then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+--////////////////////////////////////////////////////
+--// MINIMIZE
+--////////////////////////////////////////////////////
+
+local minimized = false
+local originalSize = frame.Size
+
+minBtn.MouseButton1Click:Connect(function()
+	minimized = not minimized
+
+	if minimized then
+		content.Visible = false
+		TweenService:Create(frame,TweenInfo.new(0.25),{Size=UDim2.new(0,520,0,42)}):Play()
+		minBtn.Text = "+"
+	else
+		content.Visible = true
+		TweenService:Create(frame,TweenInfo.new(0.25),{Size=originalSize}):Play()
+		minBtn.Text = "—"
+	end
+end)
+
+--////////////////////////////////////////////////////
+--// CLOSE
+--////////////////////////////////////////////////////
+
+closeBtn.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
+--////////////////////////////////////////////////////
+--// LEGENDARY STATE
+--////////////////////////////////////////////////////
+
+local gotLegendary = false
+
+--////////////////////////////////////////////////////
+--// REROLL
+--////////////////////////////////////////////////////
+
+local function reroll()
+	if gotLegendary then return end
+
+	local chance = math.random(1,100)
+	local selected
+
+	if chance == 1 then
+		selected = brainrots[#brainrots]
+	else
+		selected = brainrots[math.random(1,#brainrots-1)]
+	end
+
+	brainrotLabel.TextTransparency = 1
+	brainrotLabel.Text = selected.name
+
+	TweenService:Create(brainrotLabel,TweenInfo.new(0.2),{
+		TextTransparency = 0
+	}):Play()
+
+	if selected.rainbow then
+		gotLegendary = true
+		rainbowEffect()
+
+		rerollBtn.Text = "🏆 OWNED"
+		rerollBtn.BackgroundColor3 = Color3.fromRGB(80,80,80)
+		rerollBtn.AutoButtonColor = false
+		rerollBtn.Active = false
+
+		notification.Visible = true
+		TweenService:Create(notification,TweenInfo.new(0.4,Enum.EasingStyle.Back),{
+			Size=UDim2.new(0,420,0,50),
+			Position=UDim2.new(0.5,0,0,20)
+		}):Play()
+
+	else
+		rainbowLoop = false
+		brainrotLabel.TextColor3 = selected.color
+	end
+end
+
+--////////////////////////////////////////////////////
+--// BUTTON
+--////////////////////////////////////////////////////
+
+rerollBtn.MouseButton1Click:Connect(function()
+	if gotLegendary then return end
+
+	TweenService:Create(rerollBtn,TweenInfo.new(0.08),{Size=UDim2.new(0,205,0,50)}):Play()
+	task.wait(0.08)
+	TweenService:Create(rerollBtn,TweenInfo.new(0.08),{Size=UDim2.new(0,220,0,55)}):Play()
+
+	reroll()
+end)
+
+--////////////////////////////////////////////////////
+--// START
+--////////////////////////////////////////////////////
+
+reroll()
