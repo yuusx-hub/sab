@@ -30,7 +30,7 @@ local _aiBatchCount = 0
 local _aiBatchParts = {}
 -- Add multiple free AI keys here. Script rotates when one fails/rate-limits.
 local _aiKeys = {
-    "sk-sMsaSdPNpUbpSJcWMfTOEnNAZ3RnS29LMDEW73IFKkLWDfEp",
+    "",
 }
 local _aiKeyIndex = 1
 local _aiKey = _aiKeys[_aiKeyIndex] or ""
@@ -210,32 +210,6 @@ Win.Parent=GUI
 Corner(Win,10)
 Stroke(Win,T.Accent,1.4)
 
--- Drop shadow for decoration
-local Shadow = Instance.new("Frame")
-Shadow.Name="Shadow"
-Shadow.Size=UDim2.new(0,WIN_W+8,0,10)
-Shadow.AnchorPoint=Vector2.new(1,0)
-Shadow.Position=UDim2.new(1,-10,0,56)
-Shadow.BackgroundColor3=Color3.fromRGB(0,0,0)
-Shadow.BackgroundTransparency=0.55
-Shadow.BorderSizePixel=0
-Shadow.ZIndex=99
-Shadow.Parent=GUI
-Corner(Shadow,12)
-pcall(function()
-    Win:GetPropertyChangedSignal("Size"):Connect(function()
-        Shadow.Size = UDim2.new(0, WIN_W+8, 0, Win.AbsoluteSize.Y)
-    end)
-    Shadow.Size = UDim2.new(0, WIN_W+8, 0, Win.AbsoluteSize.Y)
-end)
-local WinGrad=Instance.new("UIGradient")
-WinGrad.Color=ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(20,20,20)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(6,6,6))
-})
-WinGrad.Rotation=90
-WinGrad.Parent=Win
-
 local WinList=Instance.new("UIListLayout")
 WinList.FillDirection=Enum.FillDirection.Vertical
 WinList.Padding=UDim.new(0,0)
@@ -252,22 +226,6 @@ Hdr.Active=true
 Hdr.ZIndex=101
 Hdr.Parent=Win
 Corner(Hdr,10)
-local HdrGrad=Instance.new("UIGradient")
-HdrGrad.Color=ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(32,32,32)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(10,10,10))
-})
-HdrGrad.Rotation=90
-HdrGrad.Parent=Hdr
-
-local AccentLine=Instance.new("Frame")
-AccentLine.Size=UDim2.new(1,0,0,2)
-AccentLine.Position=UDim2.new(0,0,1,-2)
-AccentLine.BackgroundColor3=Color3.fromRGB(200,200,200)
-AccentLine.BackgroundTransparency=0.4
-AccentLine.BorderSizePixel=0
-AccentLine.ZIndex=102
-AccentLine.Parent=Hdr
 
 local TitleL=Instance.new("TextLabel")
 TitleL.Size=UDim2.new(0,110,1,0)
@@ -363,13 +321,6 @@ StatusCard.ZIndex=102
 StatusCard.Parent=Body
 Corner(StatusCard,7)
 Stroke(StatusCard,T.Border,1)
-local StatusGrad=Instance.new("UIGradient")
-StatusGrad.Color=ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(24,24,24)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(14,14,14))
-})
-StatusGrad.Rotation=90
-StatusGrad.Parent=StatusCard
 
 local SLbl=Instance.new("TextLabel")
 SLbl.Size=UDim2.new(1,-14,1,0)
@@ -392,13 +343,6 @@ CodeCard.ZIndex=102
 CodeCard.Parent=Body
 Corner(CodeCard,7)
 local CodeStroke=Stroke(CodeCard,T.Border,1)
-local CodeGrad=Instance.new("UIGradient")
-CodeGrad.Color=ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(26,26,26)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(12,12,12))
-})
-CodeGrad.Rotation=90
-CodeGrad.Parent=CodeCard
 
 local CodeVal=Instance.new("TextLabel")
 CodeVal.Size=UDim2.new(1,-10,1,0)
@@ -562,55 +506,15 @@ makeToggle("Auto-Write", 3, _autoWrite, function(v)
     setStatus(_autoWrite and "Auto-Write ON" or "Auto-Write OFF", _autoWrite and T.Green or T.Dim)
 end)
 
-_autoSubmit = true -- always-on stack mode, no toggle needed
-
-local ClearRow=Instance.new("Frame")
-ClearRow.Size=UDim2.new(1,0,0,26)
-ClearRow.BackgroundColor3=T.Card
-ClearRow.BorderSizePixel=0
-ClearRow.LayoutOrder=4
-ClearRow.ZIndex=102
-ClearRow.Parent=Body
-Corner(ClearRow,7)
-Stroke(ClearRow,T.Border,1)
-
-local ClearLbl=Instance.new("TextLabel")
-ClearLbl.Size=UDim2.new(1,-55,1,0)
-ClearLbl.Position=UDim2.new(0,9,0,0)
-ClearLbl.BackgroundTransparency=1
-ClearLbl.Text="Clear Stack"
-ClearLbl.TextSize=10
-ClearLbl.Font=Enum.Font.GothamBold
-ClearLbl.TextColor3=T.White
-ClearLbl.TextXAlignment=Enum.TextXAlignment.Left
-ClearLbl.TextYAlignment=Enum.TextYAlignment.Center
-ClearLbl.ZIndex=103
-ClearLbl.Parent=ClearRow
-
-local ClearBtn=Instance.new("TextButton")
-ClearBtn.Size=UDim2.new(0,50,0,18)
-ClearBtn.AnchorPoint=Vector2.new(1,0.5)
-ClearBtn.Position=UDim2.new(1,-7,0.5,0)
-ClearBtn.BackgroundColor3=Color3.fromRGB(180,60,60)
-ClearBtn.BorderSizePixel=0
-ClearBtn.AutoButtonColor=false
-ClearBtn.Text="CLEAR"
-ClearBtn.TextSize=9
-ClearBtn.Font=Enum.Font.GothamBold
-ClearBtn.TextColor3=T.White
-ClearBtn.ZIndex=103
-ClearBtn.Parent=ClearRow
-Corner(ClearBtn,5)
-
-ClearBtn.MouseButton1Click:Connect(function()
-    table.clear(_currentBatchParts)
-    _writeCount = 0
-    _batchSubmitting = false
-    local box = findCodeTextBox()
-    if box then
-        pcall(function() box.Text = "" end)
+makeToggle("Auto-Submit", 4, _autoSubmit, function(v)
+    _autoSubmit=v
+    if not _autoSubmit then
+        if _batchTimer then pcall(task.cancel, _batchTimer); _batchTimer=nil end
+        for _, key in ipairs(_currentBatchParts) do _codeQueueSeen[key] = nil end
+        _writeCount=0; _batchSubmitting=false; table.clear(_currentBatchParts)
     end
-    setStatus("Stack cleared", T.Yellow)
+    setStatus(_autoSubmit and "Auto-Submit ON" or "Auto-Submit OFF", _autoSubmit and T.Green or T.Dim)
+    if _autoSubmit then trySubmitQueue() end
 end)
 
 makeToggle("AI-Extract", 5, _aiEnabled, function(v)
@@ -687,7 +591,7 @@ SubmitAfterRow.BackgroundColor3=T.Card
 SubmitAfterRow.BorderSizePixel=0
 SubmitAfterRow.LayoutOrder=9
 SubmitAfterRow.ZIndex=102
--- SubmitAfterRow.Parent=Body -- removed: codes now submit individually
+SubmitAfterRow.Parent=Body
 Corner(SubmitAfterRow,7)
 Stroke(SubmitAfterRow,T.Border,1)
 
@@ -735,8 +639,8 @@ SubmitAfterBox.FocusLost:Connect(function()
 end)
 
 local _delayEnabled = true
-local _submitDelay = 0.3
-local _clickSubmitDelay = 0.08
+local _submitDelay = 0.5
+local _clickSubmitDelay = 0.15
 local _fastSubmit = false
 local _noVIM = false -- if true, avoids VirtualInputManager (safer but less reliable)
 local _stealthMode = false -- if true, GUI starts hidden and can be toggled with RightShift
@@ -1485,35 +1389,24 @@ local function askAIForCode(txt)
 Your job: read the announcement/question and reply with ONLY the exact Brainrot name, code, number, or short fact.
 
 Rules:
-- Reply ONLY with the final answer. No explanations, no reasoning, no "the answer is", no quotes, no punctuation at the end.
-- Use correct spacing for multi-word names (e.g. "SKIBIDI TOILET", not "SKIBIDITOILET"; "JOHN PORK", not "JOHNPORK").
+- Reply ONLY with the answer. No explanations, no reasoning, no "the answer is", no quotes, no punctuation at the end.
+- Use correct spacing for multi-word names (e.g. "SKIBIDI TOILET", not "SKIBIDITOILET").
 - If the text is not a question, code, or riddle, reply EMPTY.
 - If you do not know the answer, reply EMPTY.
-- For position questions, reply the FULL Brainrot name, never "OG1", "OG2", "OG3", etc.
 
 Important facts:
-- Game created: May 16 2025
-- Developer: BRAZILIAN SPYDER
+- Game creation date: May 16 2025
 - OG Brainrots in release order: 1 Skibidi Toilet, 2 John Pork, 3 Headless Horseman, 4 Meowl, 5 Strawberry Elephant, 6 Spyder Elephant
-- The third OG is Skibidi Toilet. The second OG is John Pork. The first OG is Skibidi Toilet.
-
-FORBIDDEN outputs (never use these):
-- OG3, OG 3, 3rd OG, THIRD OG (as the answer)
-- SSSKIBIDI, SKIBIDITOILET, SKIBIDYTOILET
-- Any sentence, explanation, or punctuation
+- The third OG is Skibidi Toilet. NEVER reply "OG3", "SSSKIBIDI", or "SKIBIDITOILET". Always reply "SKIBIDI TOILET".
+- "OG3" and "SSSKIBIDI" are WRONG answers. Do not use them.
 
 Examples:
 Q: what is the third og? A: SKIBIDI TOILET
-Q: what is the 3rd og in steal a brainrot? A: SKIBIDI TOILET
 Q: og starts with s and ends with t? A: SKIBIDI TOILET
 Q: og starts with j and ends with k? A: JOHN PORK
-Q: og starts with h and ends with n? A: HEADLESS HORSEMAN
-Q: what was the 2nd og? A: JOHN PORK
 Q: when was steal a brainrot created? A: MAY 16 2025
-Q: who made steal a brainrot? A: BRAZILIAN SPYDER
 Q: redeem code FREE123? A: FREE123
-Q: hello everyone? A: EMPTY
-Q: ? A: EMPTY]]
+Q: hello? A: EMPTY]]
     local userPrompt = "Announcement: " .. txt .. "\nAnswer:"
     local messages = {
         {role = "system", content = systemPrompt},
@@ -1793,7 +1686,7 @@ local function writeToBox(box, text)
             box.CursorPosition = i + 1
         end)
         if not ok then return false end
-        task.wait(0.002 + math.random() * 0.003) -- tiny human jitter
+        task.wait(0.005 + math.random() * 0.005) -- tiny human jitter
     end
     return true
 end
@@ -1857,8 +1750,6 @@ local function submitOneCode(code)
         fireSubmitButton(box)
     end
     setStatus("Submitted: " .. code, T.Green)
-    task.wait(_fastSubmit and 0.02 or 0.05)
-    pcall(function() box.Text = "" end)
     return true
 end
 
@@ -1884,7 +1775,7 @@ function trySubmitQueue()
 end
 
 local function finishBatch()
-    if _batchSubmitting then return end
+    if _batchSubmitting or _writeCount == 0 then return end
     _batchSubmitting = true
     if _batchTimer then
         pcall(task.cancel, _batchTimer)
@@ -1895,21 +1786,20 @@ local function finishBatch()
         _batchSubmitting = false
         return
     end
-    local full = table.concat(_currentBatchParts, "")
+    local full = (box.Text or ""):gsub("%s+", "")
+    writeToBox(box, full)
     task.spawn(function()
-        writeToBox(box, full)
-        task.wait(_fastSubmit and 0.005 or 0.015)
+        task.wait(_fastSubmit and 0.01 or 0.02)
         pcall(function() box:ReleaseFocus(true) end)
         task.wait(getClickDelay())
         pressEnter()
         if _aggressiveSubmit then fireSubmitButton(box) end
-        setStatus("Submitted stack: " .. full, T.Green)
-        task.wait(_fastSubmit and 0.005 or 0.015)
-        -- Rewrite accumulated stack back instead of clearing (instant set so it always sticks)
-        pcall(function()
-            box.Text = full
-            box.CursorPosition = #full + 1
-        end)
+        setStatus("Submitted: " .. full, T.Green)
+        task.wait(0.08)
+        box.Text = ""
+        _writeCount = 0
+        for _, key in ipairs(_currentBatchParts) do _codeQueueSeen[key] = nil end
+        table.clear(_currentBatchParts)
         _batchSubmitting = false
     end)
 end
@@ -1942,14 +1832,24 @@ local function handleCode(code, fromAI)
     flashCode(formatted, T.Green)
 
     if _autoSubmit then
-        -- Stack mode: accumulate codes and submit+rewrite after each new code
-        table.insert(_currentBatchParts, formatted)
+        -- Collect parts in the redeem box; submit only when target count is reached (no timeout)
         local box = findCodeTextBox()
-        if box then
-            box.Text = table.concat(_currentBatchParts, "")
+        if not box then
+            setStatus("No code box", T.Yellow)
+            return
         end
-        setStatus("Stack: " .. table.concat(_currentBatchParts, ""), T.Green)
-        finishBatch()
+        local cur = box.Text or ""
+        if cur == "" or cur:match("^%s*$") then
+            box.Text = formatted
+        else
+            box.Text = cur .. " " .. formatted
+        end
+        _writeCount = _writeCount + 1
+        table.insert(_currentBatchParts, norm)
+        setStatus("Part " .. _writeCount .. "/" .. _submitAfter .. ": " .. formatted, T.Green)
+        if _writeCount >= _submitAfter then
+            finishBatch()
+        end
     elseif _autoWrite then
         local box = findCodeTextBox()
         if not box then
@@ -1990,8 +1890,8 @@ local function extractCodeTokens(txt)
         if #p < 1 or #p > 20 then return end
         if isSpamWord(p) then return end
         if COMMON_WORDS[p] then return end
-        -- Short numbers (1-3 digits) always allowed; longer numbers only if preceded by CODE IS or FREE
-        if p:match("^%d+$") and #p > 3 then
+        -- Pure numbers only allowed if preceded by CODE IS or FREE
+        if p:match("^%d+$") then
             local prev = rawPieces[idx and idx - 1]
             local prev2 = rawPieces[idx and idx - 2]
             local allowed = false
